@@ -1,4 +1,4 @@
-export default function Avatar({ userId, username, online }) {
+export default function Avatar({ userId, username, online,profile }) {
   // Define an array of background colors for the avatar
   const colors = [
     "bg-teal-200",
@@ -21,7 +21,7 @@ export default function Avatar({ userId, username, online }) {
   const color = colors[colorIndex];
 
   return (
-    <div className={"w-8 h-8 relative rounded-full flex items-center " + color}>
+    <div className={(!profile?"w-8 h-8":"w-10 h-10") + " relative rounded-full flex items-center " + color}>
       {/* Display the first character of the username */}
       <div className="text-center w-full opacity-70">{username[0]}</div>
 
