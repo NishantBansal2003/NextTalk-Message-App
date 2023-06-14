@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react"; // Import necessary dependencies and hooks from React
-import Avatar from "./Avatar"; // Import the Avatar component
 import Logo from "./Logo"; // Import the Logo component
 import { UserContext } from "./UserContext.jsx"; // Import the UserContext from UserContext.jsx file
 import { uniqBy } from "lodash"; // Import the uniqBy function from Lodash library
 import axios from "axios"; // Import the axios library for making HTTP requests
 import Contact from "./Contact"; // Import the Contact component
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperclip, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 export default function Chat() {
   // Declare the functional component named Chat
   const [ws, setWs] = useState(null); // Declare a state variable "ws" to hold the WebSocket connection
@@ -173,8 +173,8 @@ export default function Chat() {
   return (
     <div className="flex h-screen">
       <div className=" bg-white w-1/3 flex flex-col">
-        <Logo />
-        <div className="overflow-y-scroll">
+        <Logo name={username} />
+        <div className="overflow-y-scroll border-t">
           {Object.keys(onlinePeopleExclOurUser).map(
             (
               userId //showing log for each online user
@@ -205,33 +205,18 @@ export default function Chat() {
             />
           ))}
         </div>
-        <div className="p-2 text-center flex items-center justify-center">
-          <span className="mr-2 text-sm text-gray-600 flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {username}
-          </span>
+        <div className="p-2 text-center absolute bottom-0">
           <button
             onClick={logout}
-            className="text-sm bg-blue-100 py-1 px-2 text-gray-500 border rounded-sm"
+            className="text-sm bg-[#e1e6fc] py-2 px-2 text-gray-500 border border-[#667eea] rounded-full"
           >
-            logout
+            Logout
           </button>
         </div>
       </div>
       <div className="flex flex-col w-2/3">
         {!!selectedUserId && (
-          <div className="bg-blue-500  h-14 flex item-center">
+          <div className="bg-[#667eea]  h-14 flex item-center">
             {onlinePeopleExclOurUser[selectedUserId] ? (
               <Contact
                 key={selectedUserId}
@@ -253,7 +238,7 @@ export default function Chat() {
             )}
           </div>
         )}
-        <div className="flex flex-col bg-blue-50 h-full  p-2">
+        <div className="flex flex-col bg-[#ebeefc] h-full  p-2">
           <div className="flex-grow">
             {/* IF WE DO NOT SELECT ANY PERSON YET TO CHAT */}
             {!selectedUserId && (
@@ -266,7 +251,7 @@ export default function Chat() {
             {/* If user is selected show all messages */}
             {!!selectedUserId && (
               <div className="relative h-full">
-                <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
+                <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2 overflow-x-hidden">
                   {messagesWithoutDupes.map((message) => (
                     <div
                       key={message._id}
@@ -278,7 +263,7 @@ export default function Chat() {
                         className={
                           "text-left inline-block p-2 my-2 rounded-md text-sm " +
                           (message.sender === id
-                            ? "bg-blue-500 text-white"
+                            ? "bg-[#667eea] text-white"
                             : "bg-white text-gray-500")
                         }
                       >
@@ -326,41 +311,19 @@ export default function Chat() {
                 value={newMessageText}
                 onChange={(ev) => setNewMessageText(ev.target.value)}
                 placeholder="Type your message here"
-                className="bg-white flex-grow border rounded-sm p-2"
+                className="bg-white w-full border rounded-full p-2 "
               />
-              <label className="bg-blue-200 p-2 text-gray-600 cursor-pointer rounded-sm border border-blue-200">
+              <label className="bg-[#c8d1fa] p-2 text-gray-600 h-10 w-10 cursor-pointer rounded-full border border-blue-200">
                 <input type="file" className="hidden" onChange={sendFile} />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+
+                <FontAwesomeIcon icon={faPaperclip} className="h-5 w-5 " />
               </label>
               <button
                 type="submit"
-                className="bg-blue-500 p-2 text-white rounded-sm"
+                disabled={newMessageText.length < 1}
+                className="bg-[#667eea] p-2 h-10 w-10 text-white rounded-full"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faPaperPlane} className="h-5 w-5" />
               </button>
             </form>
           )}
